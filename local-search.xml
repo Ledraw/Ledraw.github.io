@@ -3,31 +3,5 @@
   
   
   
-  <entry>
-    <title>test</title>
-    <link href="/2024/09/26/test/"/>
-    <url>/2024/09/26/test/</url>
-    
-    <content type="html"><![CDATA[<img src="/2024/09/26/test/image-20240926223901159.png" class="" title="image-20240926223901159">]]></content>
-    
-    
-    
-  </entry>
-  
-  
-  
-  <entry>
-    <title>法国EURECOM-X-Ray-TLS</title>
-    <link href="/2024/09/26/France-EURECOM-X-Ray-TLS/"/>
-    <url>/2024/09/26/France-EURECOM-X-Ray-TLS/</url>
-    
-    <content type="html"><![CDATA[<p>法国通信系统工程师学校与研究中心(EURECOM)| X-Ray-TLS:通过从内存中提取会话密钥对TLS会话进行透明解密</p><img src="/2024/09/26/France-EURECOM-X-Ray-TLS/c309aba5-a6ed-4353-b335-b83dfb0ed30a.png" class="" title="c309aba5-a6ed-4353-b335-b83dfb0ed30a.png"><blockquote><p><em>原文标题：X-Ray-TLS: transparent decryption of TLS sessions by extracting session keys from memory</em><br><em>原文作者： Florent Moriconi, Olivier Levillain, Aurélien Francillon, Raphael Troncy</em><br><em>发表期刊： ACM ASIA Conference on Computer and Communications Security (ACM ASIACCS)</em><br><em>原文链接：<a href="https://dl.acm.org/doi/10.1145/3634737.3637654">https://dl.acm.org/doi/10.1145/3634737.3637654</a></em><br><em>主题类型：流量解密</em> </p></blockquote><h1 id="研究背景"><a href="#研究背景" class="headerlink" title="研究背景"></a>研究背景</h1><p>传统的TLS拦截方法（如中间人攻击和HTTPS代理）通常复杂且具有侵入性。需要一种更简单且不侵入的方式来解密TLS会话，以便在不影响安全性的情况下进行流量分析。</p><h1 id="方法与实现"><a href="#方法与实现" class="headerlink" title="方法与实现"></a>方法与实现</h1><ul><li>X-Ray-TLS方法<ul><li>通过比较两次内存快照之间的差异，提取会话密钥来透明地解密TLS会话。</li><li>利用现有的内核功能和eBPF来从进程内存中提取TLS会话密钥。</li><li>支持TLS 1.2、TLS 1.3和QUIC协议。</li><li>适用于多种TLS库和应用程序，特别是在CI&#x2F;CD管道中检测软件供应链攻击。</li><li>不需要修改目标程序或使用虚拟机监控程序。</li></ul></li><li>整体架构</li></ul><img src="/2024/09/26/France-EURECOM-X-Ray-TLS/ce40b590-45a9-4d2e-82e4-35b131d04f75.png" class="" title="ce40b590-45a9-4d2e-82e4-35b131d04f75.png"><ul><li>X-Ray-TSL与其他方法对比</li></ul><img src="/2024/09/26/France-EURECOM-X-Ray-TLS/8cba8e95-27d9-4dbf-a43f-5fa0cb5c5f75.png" class="" title="8cba8e95-27d9-4dbf-a43f-5fa0cb5c5f75.png"><h1 id="技术细节"><a href="#技术细节" class="headerlink" title="技术细节"></a>技术细节</h1><ul><li><p>内存快照策略:</p><ul><li>使用软脏位（soft-dirty bit）来跟踪内存页面的变化。</li><li>提供五种内存快照策略，从完整转储到部分转储，优化性能和减少冻结时间 。</li></ul></li><li><p>五种快照策略的冻结时间对比</p></li></ul><img src="/2024/09/26/France-EURECOM-X-Ray-TLS/d86403d7-06a6-445b-9ffc-aed980950df6.png" class="" title="d86403d7-06a6-445b-9ffc-aed980950df6.png"><p>其中full-partial-rst方法的冻结时间最少</p><h1 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h1><ul><li>CI环境（Continuous Integration）:<ul><li>适用于企业网络和CI环境，帮助检测信息泄露、确保工件可追溯性，并支持构建失败的根本原因分析 。</li></ul></li><li>通用性:<ul><li>与其他TLS检查方法（如MITM和HTTPS代理）相比，X-Ray-TLS不需要目标程序的配合，并且在不同的TLS库中具有通用性</li></ul></li></ul><h1 id="展望"><a href="#展望" class="headerlink" title="展望"></a>展望</h1><p>计划使用数据驱动技术来改进密钥提取和模式检测。这将有助于自动发现密钥存储模式，从而将密钥搜索集中在特定的内存区域</p><h1 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h1><p>X-Ray-TLS提供了一种高效且不侵入的TLS流量解密方法，适用于多种实际应用场景，特别是在CI&#x2F;CD管道中。其实现已在GitHub上发布，并得到了法国国家研究机构的支持。展示了X-Ray-TLS在TLS流量解密中的创新性和实用性。</p>]]></content>
-    
-    
-    
-  </entry>
-  
-  
-  
   
 </search>

@@ -4,6 +4,56 @@
   
   
   <entry>
+    <title>查罗塔尔科技大学-差分隐私保护</title>
+    <link href="/2024/09/27/%E6%9F%A5%E7%BD%97%E5%A1%94%E5%B0%94%E7%A7%91%E6%8A%80%E5%A4%A7%E5%AD%A6-%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81%E4%BF%9D%E6%8A%A4/"/>
+    <url>/2024/09/27/%E6%9F%A5%E7%BD%97%E5%A1%94%E5%B0%94%E7%A7%91%E6%8A%80%E5%A4%A7%E5%AD%A6-%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81%E4%BF%9D%E6%8A%A4/</url>
+    
+    <content type="html"><![CDATA[<blockquote><p><em>原文标题：Deep Learning: Differential Privacy Preservation in the Era of Big Data</em><br><em>原文作者：Jalpesh Vasa, Amit Thakkar</em><br><em>发表会议：计算机信息系统学报</em><br><em>原文链接： <a href="https://doi.org/10.1080/08874417.2022.2089775">https://doi.org/10.1080/08874417.2022.2089775</a></em><br><em>主题类型：隐私保护</em>  </p></blockquote><h1 id="论文工作"><a href="#论文工作" class="headerlink" title="论文工作"></a>论文工作</h1><p>本文阐述了一些可能的攻击，阐述了在一些大数据平台中保护隐私的一些基本方法，并讨论了基于深度学习方法在隐私保护方面的有效性。最后给出了一种增强深度学习模型隐私保护的有效方法。</p><p>论文的主要贡献有以下三点：</p><ul><li>提供对大数据时代中几种隐私侵犯攻击的深入洞察。</li><li>研究了深度学习中差分隐私保护的核心思想，以及它们的优缺点。</li><li>为深度学习方法中的隐私保护提供可能的研究方向</li></ul><h1 id="差分隐私实现机制"><a href="#差分隐私实现机制" class="headerlink" title="差分隐私实现机制"></a>差分隐私实现机制</h1><p>拉普拉斯机制和指数机制</p><h1 id="面向大数据的深度学习差分隐私保护"><a href="#面向大数据的深度学习差分隐私保护" class="headerlink" title="面向大数据的深度学习差分隐私保护"></a>面向大数据的深度学习差分隐私保护</h1><h2 id="攻击方法"><a href="#攻击方法" class="headerlink" title="攻击方法"></a>攻击方法</h2><ul><li><p>深度学习中的成员推断攻击：由于训练集和测试集的行为不同而引起。对手推断一个数据集是否存在于训练数据集中。攻击![]<br>模型如下</p></li><li><p>对抗攻击：修改原始图像，有意地通过混淆来干扰深度神经网络。攻击模型如下</p></li><li><p>模型和训练数据提取攻击：从攻击者复制的模型的个人数据中提取模型中训练的参数，从而导致训练集的隐私泄露</p></li><li><p>链接攻击：攻击者将匿名数据与不同数据集中的非匿名数据链接起来，造成隐私泄露。</p></li><li><p>干扰攻击：攻击者通过数据挖掘技术非法获取个人信息</p></li><li><p>关联攻击：攻击者可以根据背景知识生成相关信息，以此获得更多的隐私信息造数据隐私泄露。</p></li></ul><h2 id="隐私保护方法"><a href="#隐私保护方法" class="headerlink" title="隐私保护方法"></a>隐私保护方法</h2><ul><li><p>基于 K-匿名的方法</p><p>使用上述的方法实现数据的隐私保护，实验表明基于 K-匿名的方法不能很好的解决大数据环境下的隐私保护问题</p></li></ul><ul><li><p>基于优化算法方法</p><p>通过实验表明该方法会造成信息损失，同时时间复杂度也更高</p></li><li><p>采用加密的方法实现隐私保护</p></li></ul><p>这些算法的优点如下图所示。如点到点的云系统，该方法的能耗与与合作模型相比降低了 75%。蜜罐加密方案改进了攻击检查和安全性</p><ul><li>基于深度学习的隐私保护方案</li></ul><p>其中多方案差分隐私方法减少了通信花销，同时效率更高。私有卷积深度神经网络在不同的隐私预算中，保持相同的预测准确率。</p><ul><li><p>深度学习的差分隐私保护方法<br>包含 11 种差分隐私保护方案，这些方案提供了数据在深度学习中免受各种攻击的安全性，使端到端学习系统同时具有学习到的特征和分类器。</p><p>其中加密深度神经网络云安全方法，包损失减少 10%，响应时间提高了 5%。</p></li></ul><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>由于大量私人数据的隐私问题，深度学习隐私保护是一个重要的研究领域。如果攻击者访问到用户的个人信息，将会造成用户数据的丢失。一个有效的隐私保护方案对深度学习中隐私保护的增强有很大的影响。</p><p>本篇论文总结了一些常见的隐私保护方案，同时探究不同的隐私保护方案各自的优点。其中基于深度学习的隐私保护方法比其他经典的方法更有效地保护数据隐私。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>论文笔记</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>隐私保护</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>浙江大学-Unet3+</title>
+    <link href="/2024/09/27/%E6%B5%99%E6%B1%9F%E5%A4%A7%E5%AD%A6-Unet3/"/>
+    <url>/2024/09/27/%E6%B5%99%E6%B1%9F%E5%A4%A7%E5%AD%A6-Unet3/</url>
+    
+    <content type="html"><![CDATA[<blockquote><p>*原文标题：UNET 3+: A FULL-SCALE CONNECTED UNET FOR MEDICAL IMAGE SEGMENTATION</p><p>*原作者:Huimin Huang, Lanfen Lin, Ruofeng Tong, Hongjie Hu,Qiaowei Zhang, Yutaro Iwamoto,Xianhua Han3, Yen-Wei Chen, Jian Wu</p><p>*发表会议：ICASSP 2020-2020 IEEE international conference on acoustics, speech and signal processing (ICASSP).</p><p>*原文链接：<a href="https://arxiv.org/ftp/arxiv/papers/2004/2004.08790.pdf">https://arxiv.org/ftp/arxiv/papers/2004/2004.08790.pdf</a></p><p>*主题类型：深度学习，语义分割</p></blockquote><h1 id="论文工作"><a href="#论文工作" class="headerlink" title="论文工作"></a>论文工作</h1><p>在本文中，我们提出了一种新的 UNet 3+，它利用了全尺寸跳跃连接和深度监督。全尺寸跳跃连接结合了来自不同尺度特征映射的低级细节和高级语义;而深度监督则从全尺寸聚合特征映射中学习分层表示。在精度提高的同时，可以减少网络参数，提高计算效率。同时提出了一种混合损失函数，并设计了一个分类引导模块来增强器官边界，减少非器官图像的过度分割，从而获得更准确的分割结果。</p><h1 id="文章贡献"><a href="#文章贡献" class="headerlink" title="文章贡献"></a>文章贡献</h1><ul><li>设计了一种新颖的 UNet 3+，通过引入全尺寸跳过连接来充分利用多尺度特征，该连接将全尺寸特征图中的低级细节与高级语义结合起来</li><li>开发深度监督，从全尺寸聚合特征图中学习层次表示，优化混合损失函数以增强器官边界</li><li>提出了一种分类引导模块，通过与图像级分类的联合训练来减少对非器官图像的过度分割</li></ul><h1 id="模型对比"><a href="#模型对比" class="headerlink" title="模型对比"></a>模型对比</h1><p>与 UNet 和 UNet++相比，UNet 3+结合了多尺度特征，通过重新设计跳过连接，并利用全尺寸深度监督，提供更少的参数，但产生更准确的位置感知和边界增强分割图。</p><h2 id="特征图构建"><a href="#特征图构建" class="headerlink" title="特征图构建"></a>特征图构建</h2><p>与 Unet 相似都要通过特征提取网络进行特征提取，解码层的构建有所不同，以解码第三层为例，他需要通过编码的第一，第二，第三层通过卷积和池化后以及解码的第四层上采样后，再通过一个 3x3 的卷积获得。</p><h2 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h2><p>提出了一种多尺度结构形似指数损失函数（MS-SSIM）</p><p>M 为尺寸总数；μρ，μg，𝜎ρ，𝜎g 分别为 ρ 和 g 的标准差和方差；βm，γm 为每一尺寸的相关系数，C1&#x3D;0.01<em>0.01，C2&#x3D;0.03</em>0.03。</p><p>结合 focal loss 和 miou loss 最后混合损失如下</p><h2 id="分类引导模块（CGM）"><a href="#分类引导模块（CGM）" class="headerlink" title="分类引导模块（CGM）"></a>分类引导模块（CGM）</h2><p>通过添加分类任务设计本模块，本文即添加了识别一个图像受否是细胞。</p><p>经过 dropout，卷积，池化，激活等一系列操作后将在最深层生成一张二维向量（表示有&#x2F;没有器官的概率），并通过 Argmax 函数将其转化为{0，1}单一输出（即有无器官），最后将单个输出与侧面分割输出相乘</p><h1 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h1><h2 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h2><p>肝脏分割的数据集来自 ISBI LiTS 2017 挑战赛：包含 131 张 CT 扫描，其中 103 张用于训练，28 张用于测试<br>脾脏数据来自医院，其中 40 张用于训练，9 张用于测试</p><h2 id="实验结果"><a href="#实验结果" class="headerlink" title="实验结果"></a>实验结果</h2><p>将 Unet3+分别与 Unet Unet++ 做对比。分别使用了 Vgg16<br>和 ResNet-101 作为主干网络</p><p>结果表明 Unet3+的参数最少且精度最高</p><p>与其他五种语义分割网络对比</p><p>Unet3+（Hybrid loss + CGM）的精度最高</p><h2 id="分割后的图片对比"><a href="#分割后的图片对比" class="headerlink" title="分割后的图片对比"></a>分割后的图片对比</h2><p>Unet3+所展现的语义分割效果最佳</p><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>本文提出的 Unet3+（Hybrid loss + CGM）以更少的参数实现了高效的网络架构，再 Unet3+中引入分类引导模块和混合损失函数得到了更精确的位置感知和分割图。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>论文笔记</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>深度学习</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>法国EURECOM-X-Ray-TLS</title>
     <link href="/2024/09/26/France-EURECOM-X-Ray-TLS/"/>
     <url>/2024/09/26/France-EURECOM-X-Ray-TLS/</url>
@@ -11,6 +61,18 @@
     <content type="html"><![CDATA[<p>法国通信系统工程师学校与研究中心(EURECOM)| X-Ray-TLS:通过从内存中提取会话密钥对TLS会话进行透明解密</p><img src="/2024/09/26/France-EURECOM-X-Ray-TLS/c309aba5-a6ed-4353-b335-b83dfb0ed30a.png" class="" title="c309aba5-a6ed-4353-b335-b83dfb0ed30a.png"><blockquote><p><em>原文标题：X-Ray-TLS: transparent decryption of TLS sessions by extracting session keys from memory</em><br><em>原文作者： Florent Moriconi, Olivier Levillain, Aurélien Francillon, Raphael Troncy</em><br><em>发表期刊： ACM ASIA Conference on Computer and Communications Security (ACM ASIACCS)</em><br><em>原文链接：<a href="https://dl.acm.org/doi/10.1145/3634737.3637654">https://dl.acm.org/doi/10.1145/3634737.3637654</a></em><br><em>主题类型：流量解密</em> </p></blockquote><h1 id="研究背景"><a href="#研究背景" class="headerlink" title="研究背景"></a>研究背景</h1><p>传统的TLS拦截方法（如中间人攻击和HTTPS代理）通常复杂且具有侵入性。需要一种更简单且不侵入的方式来解密TLS会话，以便在不影响安全性的情况下进行流量分析。</p><h1 id="方法与实现"><a href="#方法与实现" class="headerlink" title="方法与实现"></a>方法与实现</h1><ul><li>X-Ray-TLS方法<ul><li>通过比较两次内存快照之间的差异，提取会话密钥来透明地解密TLS会话。</li><li>利用现有的内核功能和eBPF来从进程内存中提取TLS会话密钥。</li><li>支持TLS 1.2、TLS 1.3和QUIC协议。</li><li>适用于多种TLS库和应用程序，特别是在CI&#x2F;CD管道中检测软件供应链攻击。</li><li>不需要修改目标程序或使用虚拟机监控程序。</li></ul></li><li>整体架构</li></ul><img src="/2024/09/26/France-EURECOM-X-Ray-TLS/ce40b590-45a9-4d2e-82e4-35b131d04f75.png" class="" title="ce40b590-45a9-4d2e-82e4-35b131d04f75.png"><ul><li>X-Ray-TSL与其他方法对比</li></ul><img src="/2024/09/26/France-EURECOM-X-Ray-TLS/8cba8e95-27d9-4dbf-a43f-5fa0cb5c5f75.png" class="" title="8cba8e95-27d9-4dbf-a43f-5fa0cb5c5f75.png"><h1 id="技术细节"><a href="#技术细节" class="headerlink" title="技术细节"></a>技术细节</h1><ul><li><p>内存快照策略:</p><ul><li>使用软脏位（soft-dirty bit）来跟踪内存页面的变化。</li><li>提供五种内存快照策略，从完整转储到部分转储，优化性能和减少冻结时间 。</li></ul></li><li><p>五种快照策略的冻结时间对比</p></li></ul><img src="/2024/09/26/France-EURECOM-X-Ray-TLS/d86403d7-06a6-445b-9ffc-aed980950df6.png" class="" title="d86403d7-06a6-445b-9ffc-aed980950df6.png"><p>其中full-partial-rst方法的冻结时间最少</p><h1 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h1><ul><li>CI环境（Continuous Integration）:<ul><li>适用于企业网络和CI环境，帮助检测信息泄露、确保工件可追溯性，并支持构建失败的根本原因分析 。</li></ul></li><li>通用性:<ul><li>与其他TLS检查方法（如MITM和HTTPS代理）相比，X-Ray-TLS不需要目标程序的配合，并且在不同的TLS库中具有通用性</li></ul></li></ul><h1 id="展望"><a href="#展望" class="headerlink" title="展望"></a>展望</h1><p>计划使用数据驱动技术来改进密钥提取和模式检测。这将有助于自动发现密钥存储模式，从而将密钥搜索集中在特定的内存区域</p><h1 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h1><p>X-Ray-TLS提供了一种高效且不侵入的TLS流量解密方法，适用于多种实际应用场景，特别是在CI&#x2F;CD管道中。其实现已在GitHub上发布，并得到了法国国家研究机构的支持。展示了X-Ray-TLS在TLS流量解密中的创新性和实用性。</p>]]></content>
     
     
+    <categories>
+      
+      <category>论文笔记</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>流量加解密</tag>
+      
+    </tags>
     
   </entry>
   

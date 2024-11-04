@@ -26,12 +26,20 @@
 <meta property="og:site_name" content="Leraw">
 <meta property="og:description" content="TIMiner: Automatically extracting and analyzing categorized cyber threat intelligence from social data研究背景现有的大多数方法无法识别未知的IOC；无法自动生成带有域标签的分类 CTI，给一些威胁情报划分领域很困难 创新点基于卷积神经网络 （CNN） 的识别器，可自动识别 CTI 所属的域，以及分">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ledraw.github.io/2024/11/04/TIMiner-%E8%87%AA%E5%8A%A8%E4%BB%8E%E7%A4%BE%E4%BA%A4%E5%AA%92%E4%BD%93%E4%B8%AD%E6%8F%90%E5%8F%96%E7%BD%91%E7%BB%9C%E5%A8%81%E8%83%81%E6%83%85%E6%8A%A5/image-20241104163700540.png">
+<meta property="og:image" content="https://ledraw.github.io/2024/11/04/TIMiner-%E8%87%AA%E5%8A%A8%E4%BB%8E%E7%A4%BE%E4%BA%A4%E5%AA%92%E4%BD%93%E4%B8%AD%E6%8F%90%E5%8F%96%E7%BD%91%E7%BB%9C%E5%A8%81%E8%83%81%E6%83%85%E6%8A%A5/image-20241104163727866.png">
+<meta property="og:image" content="https://ledraw.github.io/2024/11/04/TIMiner-%E8%87%AA%E5%8A%A8%E4%BB%8E%E7%A4%BE%E4%BA%A4%E5%AA%92%E4%BD%93%E4%B8%AD%E6%8F%90%E5%8F%96%E7%BD%91%E7%BB%9C%E5%A8%81%E8%83%81%E6%83%85%E6%8A%A5/image-20241104163746429.png">
+<meta property="og:image" content="https://ledraw.github.io/2024/11/04/TIMiner-%E8%87%AA%E5%8A%A8%E4%BB%8E%E7%A4%BE%E4%BA%A4%E5%AA%92%E4%BD%93%E4%B8%AD%E6%8F%90%E5%8F%96%E7%BD%91%E7%BB%9C%E5%A8%81%E8%83%81%E6%83%85%E6%8A%A5/image-20241104163819109.png">
+<meta property="og:image" content="https://ledraw.github.io/2024/11/04/TIMiner-%E8%87%AA%E5%8A%A8%E4%BB%8E%E7%A4%BE%E4%BA%A4%E5%AA%92%E4%BD%93%E4%B8%AD%E6%8F%90%E5%8F%96%E7%BD%91%E7%BB%9C%E5%A8%81%E8%83%81%E6%83%85%E6%8A%A5/image-20241104163834406.png">
+<meta property="og:image" content="https://ledraw.github.io/2024/11/04/TIMiner-%E8%87%AA%E5%8A%A8%E4%BB%8E%E7%A4%BE%E4%BA%A4%E5%AA%92%E4%BD%93%E4%B8%AD%E6%8F%90%E5%8F%96%E7%BD%91%E7%BB%9C%E5%A8%81%E8%83%81%E6%83%85%E6%8A%A5/image-20241104163901479.png">
+<meta property="og:image" content="https://ledraw.github.io/2024/11/04/TIMiner-%E8%87%AA%E5%8A%A8%E4%BB%8E%E7%A4%BE%E4%BA%A4%E5%AA%92%E4%BD%93%E4%B8%AD%E6%8F%90%E5%8F%96%E7%BD%91%E7%BB%9C%E5%A8%81%E8%83%81%E6%83%85%E6%8A%A5/image-20241104164017392.png">
 <meta property="article:published_time" content="2024-11-04T08:33:48.000Z">
-<meta property="article:modified_time" content="2024-11-04T08:49:59.234Z">
+<meta property="article:modified_time" content="2024-11-04T08:50:43.684Z">
 <meta property="article:author" content="Ledraw">
 <meta property="article:tag" content="CTI">
 <meta property="article:tag" content="信息提取">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ledraw.github.io/2024/11/04/TIMiner-%E8%87%AA%E5%8A%A8%E4%BB%8E%E7%A4%BE%E4%BA%A4%E5%AA%92%E4%BD%93%E4%B8%AD%E6%8F%90%E5%8F%96%E7%BD%91%E7%BB%9C%E5%A8%81%E8%83%81%E6%83%85%E6%8A%A5/image-20241104163700540.png">
   
   
   
@@ -312,23 +320,23 @@
 </ul>
 </li>
 </ul>
-<h2 id="TIMiner-总体框架"><a href="#TIMiner-总体框架" class="headerlink" title="TIMiner 总体框架"></a>TIMiner 总体框架</h2>
+<h2 id="TIMiner-总体框架"><a href="#TIMiner-总体框架" class="headerlink" title="TIMiner 总体框架"></a>TIMiner 总体框架</h2><img src="/2024/11/04/TIMiner-%E8%87%AA%E5%8A%A8%E4%BB%8E%E7%A4%BE%E4%BA%A4%E5%AA%92%E4%BD%93%E4%B8%AD%E6%8F%90%E5%8F%96%E7%BD%91%E7%BB%9C%E5%A8%81%E8%83%81%E6%83%85%E6%8A%A5/image-20241104163700540.png" srcset="/img/loading.gif" lazyload class="" title="image-20241104163700540">
 
 <h3 id="CTI域识别器"><a href="#CTI域识别器" class="headerlink" title="CTI域识别器"></a>CTI域识别器</h3><p>用于识别已知和未知的IOC，利用 kernel&#x3D;5 的 256 个过滤器来了解每个威胁描述的本地特征，然后将池化的特征向量拼接成一个完全连接的层。最后，利用 soft-max 激活函数计算 CTI 的每个域标签的概率。</p>
-
+<img src="/2024/11/04/TIMiner-%E8%87%AA%E5%8A%A8%E4%BB%8E%E7%A4%BE%E4%BA%A4%E5%AA%92%E4%BD%93%E4%B8%AD%E6%8F%90%E5%8F%96%E7%BD%91%E7%BB%9C%E5%A8%81%E8%83%81%E6%83%85%E6%8A%A5/image-20241104163727866.png" srcset="/img/loading.gif" lazyload class="" title="image-20241104163727866">
 
 <p>处理过程算法：</p>
-
+<img src="/2024/11/04/TIMiner-%E8%87%AA%E5%8A%A8%E4%BB%8E%E7%A4%BE%E4%BA%A4%E5%AA%92%E4%BD%93%E4%B8%AD%E6%8F%90%E5%8F%96%E7%BD%91%E7%BB%9C%E5%A8%81%E8%83%81%E6%83%85%E6%8A%A5/image-20241104163746429.png" srcset="/img/loading.gif" lazyload class="" title="image-20241104163746429">
 
 <h3 id="生成具有域标签的CTI"><a href="#生成具有域标签的CTI" class="headerlink" title="生成具有域标签的CTI"></a>生成具有域标签的CTI</h3><p>算法：</p>
-
+<img src="/2024/11/04/TIMiner-%E8%87%AA%E5%8A%A8%E4%BB%8E%E7%A4%BE%E4%BA%A4%E5%AA%92%E4%BD%93%E4%B8%AD%E6%8F%90%E5%8F%96%E7%BD%91%E7%BB%9C%E5%A8%81%E8%83%81%E6%83%85%E6%8A%A5/image-20241104163819109.png" srcset="/img/loading.gif" lazyload class="" title="image-20241104163819109">
 
 <p>示例：</p>
-
+<img src="/2024/11/04/TIMiner-%E8%87%AA%E5%8A%A8%E4%BB%8E%E7%A4%BE%E4%BA%A4%E5%AA%92%E4%BD%93%E4%B8%AD%E6%8F%90%E5%8F%96%E7%BD%91%E7%BB%9C%E5%A8%81%E8%83%81%E6%83%85%E6%8A%A5/image-20241104163834406.png" srcset="/img/loading.gif" lazyload class="" title="image-20241104163834406">
 
 <h3 id="识别IOC方法"><a href="#识别IOC方法" class="headerlink" title="识别IOC方法"></a>识别IOC方法</h3><ol>
 <li><p>正则匹配</p>
-
+<img src="/2024/11/04/TIMiner-%E8%87%AA%E5%8A%A8%E4%BB%8E%E7%A4%BE%E4%BA%A4%E5%AA%92%E4%BD%93%E4%B8%AD%E6%8F%90%E5%8F%96%E7%BD%91%E7%BB%9C%E5%A8%81%E8%83%81%E6%83%85%E6%8A%A5/image-20241104163901479.png" srcset="/img/loading.gif" lazyload class="" title="image-20241104163901479">
 </li>
 <li><p>深度识别：BiLSTM+CRF 识别 IOC（正则表达无法识别的 IOC）</p>
 </li>
@@ -350,7 +358,7 @@
 <ul>
 <li>从电子邮件网络钓鱼演变为鱼叉式网络钓鱼，并最终演变为最复杂的 Watering hole 网络钓鱼</li>
 </ul>
-<h2 id="攻击趋势分析结果"><a href="#攻击趋势分析结果" class="headerlink" title="攻击趋势分析结果"></a>攻击趋势分析结果</h2>
+<h2 id="攻击趋势分析结果"><a href="#攻击趋势分析结果" class="headerlink" title="攻击趋势分析结果"></a>攻击趋势分析结果</h2><img src="/2024/11/04/TIMiner-%E8%87%AA%E5%8A%A8%E4%BB%8E%E7%A4%BE%E4%BA%A4%E5%AA%92%E4%BD%93%E4%B8%AD%E6%8F%90%E5%8F%96%E7%BD%91%E7%BB%9C%E5%A8%81%E8%83%81%E6%83%85%E6%8A%A5/image-20241104164017392.png" srcset="/img/loading.gif" lazyload class="" title="image-20241104164017392">
 
 <p>在本文中，提出了一种新的 CTI 提取框架 TIMiner，用于自动提取 IOC 并从社交媒体中生成带有域标签的分类 CTI。更具体地说，首先，提出了一种基于 CNN 变体的域标记方法，用于标记威胁描述的域标记。然后，提出了一种基于词嵌入和句法依赖性的分层 IOC 提取方法，该方法能够有效地识别未知的 IOC。最后，将 IOC 与其相应的域标记组合在一起，以生成特定于域的 CTI。特定于域的 CTI 可以与相关的 CTI 订阅者共享，并允许他们快速识别各自行业的安全状况。此外，还提出了 Threat-Index 来定量衡量每个域中不同类型攻击造成的威胁严重性。通过分析 TIMiner 生成的特定域 CTI，可以发现有关威胁的新见解，并执行威胁趋势分析，以促进为多个域设计更好的网络防御机制。</p>
 

